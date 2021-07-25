@@ -2,22 +2,23 @@
 
   <div class="card mb-3 mx-auto col-md-4 py-3 shadow-sm rounded">
 
-    <%= simple_form_for @goal do |f| %>
-    <% @goal_names = [] %>
-    <% @goals.each do |goal| %>
-      <% if goal.user_id == current_user.id %>
-        <% @goal_names << goal.name %>
-      <% end %>
+<%= simple_form_for @goal do |f| %>
+<% @goal_names = [] %>
+<% @goals.each do |goal| %>
+  <% if goal.user_id == current_user.id %>
+    <% @goal_names << goal.name %>
+  <% end %>
+<% end %>
+<select class="form-control select required" id="goal_form" name="goal[name]">
+  <option value="" disabled selected>Select your savings/goal</option>
+  <% UpApi.goal_saver(current_user.api_key).each do |key, value|%>
+    <% if @goal_names.include? key %>
+      <% next %>
+    <% else %>
+      <option value="<%= key %>" data-balance="<%= value %>"><%= key %></option>
     <% end %>
-    <select class="form-control select required" id="goal_form" name="goal[name]">
-      <% UpApi.goal_saver(current_user.api_key).each do |key, value|%>
-        <% if @goal_names.include? key %>
-          <% next %>
-        <% else %>
-          <option value="<%= key %>" data-balance="<%= value %>"><%= key %></option>
-        <% end %>
-      <% end %>
-    </select>
+  <% end %>
+</select>
                      <!--   f.input :name, as: :select, collection: UpApi.goal_saver(current_user.api_key), prompt: 'Select Saver', label: "Please choose your UP Saver account!", :input_html => { id: "select" } -->
                         <p>Your Balance:</p>
                         <p id="result"></p>
